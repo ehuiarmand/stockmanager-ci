@@ -42,3 +42,8 @@ build/
 ### Local temp / docs ###
 rapport/~$*
 CUsersUtilisateurDownloadscapturescahier.txt
+.claude/
+rapport/
+INSTALLATEUR.md
+README_PACKAGING.md
+scripts/
