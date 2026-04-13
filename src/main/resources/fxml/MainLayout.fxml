@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.inphb.icgl.stocks.controller.MainLayoutController"
+            prefWidth="1280" prefHeight="800">
+
+    <top>
+        <VBox>
+            <HBox styleClass="main-nav-bar"
+                  alignment="CENTER_LEFT" spacing="6" minHeight="52">
+                <Button fx:id="btnAccueil" text="Accueil" onAction="#ouvrirDashboard"
+                        styleClass="main-nav-item main-nav-item-active"/>
+
+                <MenuButton fx:id="menuStock" text="Stock"
+                            styleClass="main-nav-item">
+                    <items>
+                        <MenuItem text="Categories" onAction="#ouvrirCategories"/>
+                        <MenuItem text="Fournisseurs" onAction="#ouvrirFournisseurs"/>
+                        <MenuItem text="Produits" onAction="#ouvrirProduits"/>
+                        <MenuItem text="Mouvements" onAction="#ouvrirMouvements"/>
+                    </items>
+                </MenuButton>
+
+                <MenuButton fx:id="menuAdministration" text="Administration"
+                            styleClass="main-nav-item">
+                    <items>
+                        <MenuItem fx:id="menuUtilisateurs" text="Utilisateurs"
+                                  onAction="#ouvrirUtilisateurs"/>
+                        <MenuItem fx:id="menuArchives" text="Archives"
+                                  onAction="#ouvrirArchives"/>
+                    </items>
+                </MenuButton>
+
+                <MenuButton fx:id="menuSession" text="Session"
+                            styleClass="main-nav-item">
+                    <items>
+                        <MenuItem text="Deconnexion" onAction="#handleDeconnexion"/>
+                        <SeparatorMenuItem/>
+                        <MenuItem text="Quitter" onAction="#handleQuitter"/>
+                    </items>
+                </MenuButton>
+
+                <HBox HBox.hgrow="ALWAYS"/>
+
+                <Label fx:id="lblUtilisateur"
+                       styleClass="main-nav-user"/>
+            </HBox>
+
+            <HBox styleClass="main-subnav-bar"
+                  alignment="CENTER_LEFT" spacing="10">
+                <Label fx:id="lblTitrePage" text="Tableau de Bord"
+                       styleClass="main-subnav-title"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <StackPane fx:id="mainPane"/>
+    </center>
+
+    <bottom>
+        <HBox style="-fx-background-color:#ECF0F1; -fx-padding:4 12;
+                     -fx-border-color:#bdc3c7; -fx-border-width:1 0 0 0;"
+              spacing="10">
+            <Label text="INP-HB - IC-GL 2025-2026 | StockManager CI v1.0"
+                   style="-fx-text-fill:#7f8c8d; -fx-font-size:11px;"/>
+        </HBox>
+    </bottom>
+</BorderPane>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.inphb.icgl.stocks.controller.LoginController"
+            prefWidth="520" prefHeight="480"
+            style="-fx-background-color:#EEF2F7;">
+    <top>
+        <VBox alignment="CENTER" spacing="6"
+              style="-fx-background-color:#1B3A6B; -fx-padding:22 30 18 30;">
+            <Label text="StockManager CI"
+                   style="-fx-font-size:28px; -fx-font-weight:bold; -fx-text-fill:white;"/>
+            <Label text="Connexion a votre espace"
+                   style="-fx-font-size:13px; -fx-text-fill:#BDD7FF;"/>
+            <Label text="Quincaillerie KOFFI &amp; FRERES - Adjame, Abidjan"
+                   style="-fx-font-size:12px; -fx-font-weight:bold; -fx-text-fill:#F4A300;"/>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox alignment="TOP_CENTER" spacing="0"
+              style="-fx-padding:24 40 0 40;">
+            <Label text="Nom d'utilisateur"
+                   style="-fx-font-size:13px; -fx-font-weight:bold; -fx-text-fill:#1B3A6B; -fx-padding:0 0 5 0;"/>
+            <TextField fx:id="txtLogin"
+                       promptText="Entrez votre identifiant"
+                       style="-fx-font-size:14px; -fx-padding:10 12; -fx-background-color:white;
+                              -fx-border-color:#CBD5E1; -fx-border-radius:6;
+                              -fx-background-radius:6; -fx-pref-height:42px;"
+                       maxWidth="Infinity"/>
+
+            <Region prefHeight="14"/>
+
+            <Label text="Mot de passe"
+                   style="-fx-font-size:13px; -fx-font-weight:bold; -fx-text-fill:#1B3A6B; -fx-padding:0 0 5 0;"/>
+            <HBox spacing="8" alignment="CENTER_LEFT" maxWidth="Infinity">
+                <StackPane HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                    <PasswordField fx:id="txtMotDePasse"
+                                   promptText="Entrez votre mot de passe"
+                                   style="-fx-font-size:14px; -fx-padding:10 42 10 12; -fx-background-color:white;
+                                          -fx-border-color:#CBD5E1; -fx-border-radius:6;
+                                          -fx-background-radius:6; -fx-pref-height:42px;"
+                                   maxWidth="Infinity"/>
+                    <TextField fx:id="txtMotDePasseVisible"
+                               promptText="Entrez votre mot de passe"
+                               visible="false" managed="false"
+                               style="-fx-font-size:14px; -fx-padding:10 42 10 12; -fx-background-color:white;
+                                      -fx-border-color:#CBD5E1; -fx-border-radius:6;
+                                      -fx-background-radius:6; -fx-pref-height:42px;"
+                               maxWidth="Infinity"/>
+                    <Button fx:id="btnTogglePassword" text="👁"
+                            onAction="#handleTogglePassword"
+                            StackPane.alignment="CENTER_RIGHT"
+                            style="-fx-background-color:transparent; -fx-text-fill:#1B3A6B;
+                                   -fx-font-size:16px; -fx-cursor:hand; -fx-padding:0 12 0 12;"/>
+                </StackPane>
+            </HBox>
+
+            <Region prefHeight="10"/>
+
+            <Label fx:id="lblMessage" text="" wrapText="true" maxWidth="Infinity"
+                   style="-fx-font-size:12px; -fx-padding:4 0; -fx-min-height:22px;"/>
+
+            <Region prefHeight="6"/>
+
+            <HBox spacing="12" alignment="CENTER" maxWidth="Infinity">
+                <Button fx:id="btnConnexion" text="Se connecter"
+                        onAction="#handleConnexion"
+                        style="-fx-background-color:#1e8449; -fx-text-fill:white;
+                               -fx-font-size:14px; -fx-font-weight:bold;
+                               -fx-padding:11 0; -fx-background-radius:7; -fx-cursor:hand;"
+                        maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+
+                <Button fx:id="btnQuitter" text="Quitter"
+                        onAction="#handleQuitter"
+                        style="-fx-background-color:#c0392b; -fx-text-fill:white;
+                               -fx-font-size:14px; -fx-font-weight:bold;
+                               -fx-padding:11 0; -fx-background-radius:7; -fx-cursor:hand;"
+                        prefWidth="130"/>
+            </HBox>
+
+            <Region prefHeight="14"/>
+
+            <ProgressIndicator fx:id="progressIndicator"
+                               prefWidth="28" prefHeight="28" visible="false"
+                               maxWidth="Infinity"/>
+        </VBox>
+    </center>
+
+    <bottom>
+        <VBox alignment="CENTER" spacing="4"
+              style="-fx-background-color:#DDE6F0; -fx-padding:10 20;
+                     -fx-border-color:#C4D0E0; -fx-border-width:1 0 0 0;">
+            <HBox alignment="CENTER" spacing="6">
+                <Label text="Protection SHA-256"
+                       style="-fx-font-size:11px; -fx-text-fill:#2E5EAA; -fx-font-weight:bold;"/>
+            </HBox>
+
+            <Label text="Maximum 3 tentatives - Blocage automatique 30 secondes"
+                   style="-fx-font-size:11px; -fx-text-fill:#7f8c8d;"/>
+
+            <Label text="INP-HB - IC-GL 2025-2026 | StockManager CI v1.0"
+                   style="-fx-font-size:10px; -fx-text-fill:#A0AEC0;"/>
+        </VBox>
+    </bottom>
+</BorderPane>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="CENTER" spacing="16.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.inphb.icgl.stocks.controller.SplashScreenController">
+    <padding>
+        <Insets top="20.0" right="20.0" bottom="20.0" left="20.0" />
+    </padding>
+    <ImageView fx:id="imgBanner" fitHeight="90.0" fitWidth="360.0" pickOnBounds="true" preserveRatio="true" visible="false" managed="false" />
+    <ImageView fx:id="imgLogo" fitHeight="96.0" fitWidth="96.0" pickOnBounds="true" preserveRatio="true" visible="false" managed="false" />
+    <Label styleClass="title" text="StockManager CI" />
+    <Label text="Version 1.0 - INP-HB IC-GL 2025-2026" />
+    <ProgressBar prefWidth="320.0" progress="-1.0" />
+</VBox>

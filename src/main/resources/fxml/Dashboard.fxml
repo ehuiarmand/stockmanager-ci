@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.inphb.icgl.stocks.controller.DashboardController"
+      spacing="0" fillWidth="true"
+      style="-fx-background-color:#eef3f9;">
+
+    <HBox style="-fx-background-color:#1B3A6B; -fx-padding:8 18;" alignment="CENTER_LEFT" spacing="12">
+        <Label fx:id="lblBienvenue"
+               style="-fx-text-fill:#F4A300; -fx-font-size:13px; -fx-font-weight:bold;"/>
+        <HBox HBox.hgrow="ALWAYS"/>
+        <Label text="Quincaillerie KOFFI &amp; FRERES - Adjame"
+               style="-fx-text-fill:#BDD7FF; -fx-font-size:12px;"/>
+    </HBox>
+
+    <VBox spacing="14" fillWidth="true" VBox.vgrow="ALWAYS" style="-fx-padding:14 16 16 16;">
+        <VBox spacing="4"
+              style="-fx-background-color:white; -fx-background-radius:10; -fx-border-radius:10;
+                     -fx-border-color:#d6e1ef; -fx-padding:14 18;
+                     -fx-effect:dropshadow(gaussian,rgba(22,45,84,0.08),8,0,0,2);">
+            <Label text="Indicateurs cles du systeme"
+                   style="-fx-font-size:20px; -fx-font-weight:bold; -fx-text-fill:#1B3A6B;"/>
+            <Label text="Vue generale du stock, des alertes et de l'activite du jour"
+                   style="-fx-font-size:12px; -fx-text-fill:#6a7c96;"/>
+        </VBox>
+
+        <GridPane hgap="14" vgap="14" VBox.vgrow="NEVER">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="25" hgrow="ALWAYS"/>
+                <ColumnConstraints percentWidth="25" hgrow="ALWAYS"/>
+                <ColumnConstraints percentWidth="25" hgrow="ALWAYS"/>
+                <ColumnConstraints percentWidth="25" hgrow="ALWAYS"/>
+            </columnConstraints>
+
+            <VBox fx:id="cardTotal" GridPane.columnIndex="0" alignment="CENTER" spacing="6"
+                  style="-fx-background-color:linear-gradient(to bottom,#f7fbff,#e0ecfb);
+                         -fx-border-color:#2E5EAA; -fx-border-width:1.6;
+                         -fx-border-radius:10; -fx-background-radius:10;
+                         -fx-padding:16 12; -fx-min-height:120; -fx-pref-height:120;
+                         -fx-effect:dropshadow(gaussian,rgba(22,45,84,0.10),10,0,0,3);">
+                <Label text="TOTAL PRODUITS"
+                       style="-fx-font-size:12px; -fx-font-weight:bold; -fx-text-fill:#2E5EAA;"/>
+                <Label fx:id="lblTotalProduits" text="0"
+                       style="-fx-font-size:38px; -fx-font-weight:bold; -fx-text-fill:#2E5EAA;"/>
+                <Label text="articles references"
+                       style="-fx-font-size:11px; -fx-text-fill:#6f7d90;"/>
+            </VBox>
+
+            <VBox fx:id="cardAlerte" GridPane.columnIndex="1" alignment="CENTER" spacing="6"
+                  style="-fx-background-color:linear-gradient(to bottom,#fff7f6,#fee3df);
+                         -fx-border-color:#c0392b; -fx-border-width:1.6;
+                         -fx-border-radius:10; -fx-background-radius:10;
+                         -fx-padding:16 12; -fx-min-height:120; -fx-pref-height:120;
+                         -fx-effect:dropshadow(gaussian,rgba(22,45,84,0.10),10,0,0,3);">
+                <Label text="EN ALERTE"
+                       style="-fx-font-size:12px; -fx-font-weight:bold; -fx-text-fill:#c0392b;"/>
+                <Label fx:id="lblProduitsAlerte" text="0"
+                       style="-fx-font-size:38px; -fx-font-weight:bold; -fx-text-fill:#c0392b;"/>
+                <Label text="stock &lt;= minimum"
+                       style="-fx-font-size:11px; -fx-text-fill:#6f7d90;"/>
+            </VBox>
+
+            <VBox fx:id="cardMvt" GridPane.columnIndex="2" alignment="CENTER" spacing="6"
+                  style="-fx-background-color:linear-gradient(to bottom,#f6fcf7,#def2e3);
+                         -fx-border-color:#1e8449; -fx-border-width:1.6;
+                         -fx-border-radius:10; -fx-background-radius:10;
+                         -fx-padding:16 12; -fx-min-height:120; -fx-pref-height:120;
+                         -fx-effect:dropshadow(gaussian,rgba(22,45,84,0.10),10,0,0,3);">
+                <Label text="MOUVEMENTS/JOUR"
+                       style="-fx-font-size:12px; -fx-font-weight:bold; -fx-text-fill:#1e8449;"/>
+                <Label fx:id="lblMouvementsJour" text="0"
+                       style="-fx-font-size:38px; -fx-font-weight:bold; -fx-text-fill:#1e8449;"/>
+                <Label text="operations"
+                       style="-fx-font-size:11px; -fx-text-fill:#6f7d90;"/>
+            </VBox>
+
+            <VBox fx:id="cardValeur" GridPane.columnIndex="3" alignment="CENTER" spacing="6"
+                  style="-fx-background-color:linear-gradient(to bottom,#faf7ff,#ebdefd);
+                         -fx-border-color:#6610f2; -fx-border-width:1.6;
+                         -fx-border-radius:10; -fx-background-radius:10;
+                         -fx-padding:16 12; -fx-min-height:120; -fx-pref-height:120;
+                         -fx-effect:dropshadow(gaussian,rgba(22,45,84,0.10),10,0,0,3);">
+                <Label text="VALEUR DU STOCK"
+                       style="-fx-font-size:12px; -fx-font-weight:bold; -fx-text-fill:#6610f2;"/>
+                <Label fx:id="lblValeurStock" text="0 FCFA"
+                       style="-fx-font-size:22px; -fx-font-weight:bold; -fx-text-fill:#6610f2;"/>
+                <Label text="valorisation totale"
+                       style="-fx-font-size:11px; -fx-text-fill:#6f7d90;"/>
+            </VBox>
+        </GridPane>
+
+        <HBox spacing="14" VBox.vgrow="ALWAYS">
+            <VBox spacing="0" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS"
+                  style="-fx-background-color:white; -fx-background-radius:10; -fx-border-radius:10;
+                         -fx-border-color:#d6e1ef;
+                         -fx-effect:dropshadow(gaussian,rgba(22,45,84,0.08),8,0,0,2);">
+                <HBox style="-fx-background-color:#1B3A6B; -fx-padding:12 16;
+                             -fx-background-radius:10 10 0 0;" alignment="CENTER_LEFT">
+                    <Label text="Produits les plus critiques"
+                           style="-fx-text-fill:white; -fx-font-weight:bold; -fx-font-size:15px;"/>
+                    <HBox HBox.hgrow="ALWAYS"/>
+                    <Label text="Stock faible a surveiller"
+                           style="-fx-text-fill:#cfe0ff; -fx-font-size:12px;"/>
+                </HBox>
+
+                <TableView fx:id="tableAlertes" VBox.vgrow="ALWAYS"
+                           style="-fx-background-color:white; -fx-background-radius:0 0 10 10;
+                                  -fx-border-color:transparent; -fx-padding:4 6 6 6;">
+                    <columns>
+                        <TableColumn fx:id="colDesignation" text="Designation" prefWidth="320"/>
+                        <TableColumn fx:id="colQteStock" text="Qte Stock" prefWidth="110"/>
+                        <TableColumn fx:id="colStockMin" text="Stock Min" prefWidth="110"/>
+                        <TableColumn fx:id="colCategorie" text="Categorie" prefWidth="160"/>
+                        <TableColumn fx:id="colFournisseur" text="Fournisseur" prefWidth="180"/>
+                        <TableColumn fx:id="colStatut" text="Statut" prefWidth="120"/>
+                    </columns>
+                </TableView>
+            </VBox>
+
+            <VBox prefWidth="340" minWidth="340" maxWidth="340" spacing="0"
+                  style="-fx-background-color:white; -fx-background-radius:10; -fx-border-radius:10;
+                         -fx-border-color:#d6e1ef;
+                         -fx-effect:dropshadow(gaussian,rgba(22,45,84,0.08),8,0,0,2);">
+                <HBox style="-fx-background-color:#2E5EAA; -fx-padding:12 16;
+                             -fx-background-radius:10 10 0 0;" alignment="CENTER_LEFT">
+                    <Label text="Repartition du stock"
+                           style="-fx-text-fill:white; -fx-font-weight:bold; -fx-font-size:15px;"/>
+                </HBox>
+
+                <VBox spacing="6" alignment="CENTER" style="-fx-padding:12 14 14 14;">
+                    <Label text="Vue graphique des produits stables et en alerte"
+                           style="-fx-text-fill:#6a7c96; -fx-font-size:12px;"/>
+                    <Label fx:id="lblChartResume" text="0 produit"
+                           style="-fx-text-fill:#1f477f; -fx-font-size:18px; -fx-font-weight:bold;"/>
+                    <PieChart fx:id="chartStockStatus" legendVisible="false" labelsVisible="false"
+                              prefHeight="300" minHeight="300" styleClass="dashboard-pie-chart"/>
+                    <HBox alignment="CENTER" spacing="18" style="-fx-padding:4 0 0 0;">
+                        <HBox alignment="CENTER_LEFT" spacing="8">
+                            <Region styleClass="chart-dot chart-dot-normal"/>
+                            <Label fx:id="lblChartNormal" text="Stock normal : 0"
+                                   style="-fx-text-fill:#2f3f56; -fx-font-size:13px; -fx-font-weight:700;"/>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="8">
+                            <Region styleClass="chart-dot chart-dot-alert"/>
+                            <Label fx:id="lblChartAlert" text="En alerte : 0"
+                                   style="-fx-text-fill:#2f3f56; -fx-font-size:13px; -fx-font-weight:700;"/>
+                        </HBox>
+                    </HBox>
+                </VBox>
+            </VBox>
+        </HBox>
+    </VBox>
+</VBox>

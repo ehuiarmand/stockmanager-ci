@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.inphb.icgl.stocks.controller.UtilisateurController" styleClass="app-root">
+    <top>
+        <VBox spacing="8.0" styleClass="content-card">
+            <padding>
+                <Insets top="12.0" right="12.0" bottom="8.0" left="12.0"/>
+            </padding>
+            <Label styleClass="title" text="Gestion des utilisateurs (ADMIN)"/>
+            <Label fx:id="lblStatut" styleClass="status-label"/>
+        </VBox>
+    </top>
+    <center>
+        <VBox spacing="12.0" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets top="12.0" right="12.0" bottom="12.0" left="12.0"/>
+            </padding>
+            <TableView fx:id="tableUtilisateurs" styleClass="app-table" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colId" prefWidth="60.0" text="ID"/>
+                    <TableColumn fx:id="colNomComplet" prefWidth="260.0" text="Nom complet"/>
+                    <TableColumn fx:id="colLogin" prefWidth="160.0" text="Login"/>
+                    <TableColumn fx:id="colRole" prefWidth="130.0" text="Role"/>
+                    <TableColumn fx:id="colActif" prefWidth="80.0" text="Actif"/>
+                </columns>
+            </TableView>
+            <TitledPane animated="false" collapsible="false" expanded="true" styleClass="form-pane" text="Formulaire utilisateur">
+                <content>
+                    <VBox spacing="12.0" styleClass="form-content">
+                        <padding>
+                            <Insets top="12.0" right="14.0" bottom="12.0" left="14.0"/>
+                        </padding>
+                        <GridPane hgap="8.0" vgap="8.0">
+                            <columnConstraints>
+                                <ColumnConstraints minWidth="120.0" prefWidth="140.0"/>
+                                <ColumnConstraints hgrow="ALWAYS"/>
+                                <ColumnConstraints minWidth="120.0" prefWidth="140.0"/>
+                                <ColumnConstraints hgrow="ALWAYS"/>
+                            </columnConstraints>
+                            <Label styleClass="form-label" text="Nom complet:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                            <TextField fx:id="txtNomComplet" prefHeight="29.0" styleClass="form-field" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                            <Label styleClass="form-label" text="Login:" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                            <TextField fx:id="txtLogin" prefHeight="29.0" styleClass="form-field" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+                            <Label styleClass="form-label" text="Mot de passe:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                            <PasswordField fx:id="txtMotDePasse" prefHeight="29.0" styleClass="form-field" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                            <Label styleClass="form-label" text="Role:" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                            <ComboBox fx:id="cbRole" prefHeight="29.0" prefWidth="220.0" styleClass="form-combo" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+                            <CheckBox fx:id="chkActif" selected="true" text="Actif" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                        </GridPane>
+                        <HBox alignment="CENTER_RIGHT" spacing="10.0" styleClass="action-bar">
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button fx:id="btnAjouter" onAction="#handleAjouter" prefHeight="39.0" prefWidth="104.0" styleClass="action-button add-button button-success" text="+ Ajouter"/>
+                            <Button fx:id="btnModifier" onAction="#handleModifier" prefHeight="39.0" prefWidth="108.0" styleClass="action-button edit-button button-primary" text="Modifier"/>
+                            <Button fx:id="btnSupprimer" onAction="#handleSupprimer" prefHeight="39.0" prefWidth="118.0" styleClass="action-button delete-button button-danger" text="Supprimer"/>
+                            <Button fx:id="btnToggleActif" onAction="#handleDesactiver" prefHeight="39.0" prefWidth="120.0" styleClass="action-button warning-button" text="Desactiver"/>
+                        </HBox>
+                    </VBox>
+                </content>
+            </TitledPane>
+        </VBox>
+    </center>
+    <bottom>
+        <HBox spacing="10.0" styleClass="footer-bar">
+            <Button fx:id="btnPrev" onAction="#handlePrevPage" styleClass="refresh-button" text="Precedent"/>
+            <Button fx:id="btnNext" onAction="#handleNextPage" styleClass="refresh-button" text="Suivant"/>
+            <Label fx:id="lblPagination" styleClass="status-label" text="Page 1/1"/>
+        </HBox>
+    </bottom>
+</BorderPane>
