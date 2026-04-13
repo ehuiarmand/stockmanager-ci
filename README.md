@@ -32,7 +32,7 @@ Application desktop JavaFX de gestion de stock avec MySQL.
 
 Le script SQL est ici :
 
-- [database/stockmanager_ci.sql](/C:/COURS%20INPHB%20IC%202026/TP/stockmanager-ci/stockmanager-ci/database/stockmanager_ci.sql)
+- [database/stockmanager_ci.sql](database/stockmanager_ci.sql)
 
 Base par defaut utilisee par l'application :
 
@@ -94,9 +94,9 @@ Tests :
 
 Scripts disponibles :
 
-- [build-installer.ps1](/C:/COURS%20INPHB%20IC%202026/TP/stockmanager-ci/stockmanager-ci/build-installer.ps1)
-- [build-portable.ps1](/C:/COURS%20INPHB%20IC%202026/TP/stockmanager-ci/stockmanager-ci/build-portable.ps1)
-- [build-linux.sh](/C:/COURS%20INPHB%20IC%202026/TP/stockmanager-ci/stockmanager-ci/build-linux.sh)
+- [build-installer.ps1](build-installer.ps1)
+- [build-portable.ps1](build-portable.ps1)
+- [build-linux.sh](build-linux.sh)
 
 Exemples :
 
@@ -121,4 +121,4 @@ chmod +x build-linux.sh
 
 Le rapport final inclus dans le depot :
 
-- [Rapport_Complet_StockManager_CI3_v2.docx](/C:/COURS%20INPHB%20IC%202026/TP/stockmanager-ci/stockmanager-ci/Rapport_Complet_StockManager_CI3_v2.docx)
+- [Rapport_Complet_StockManager_CI3_v2.docx](Rapport_Complet_StockManager_CI3_v2.docx)
