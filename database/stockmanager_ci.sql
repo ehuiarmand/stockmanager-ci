@@ -56,7 +56,10 @@ CREATE TABLE IF NOT EXISTS mouvements (
 
 INSERT INTO utilisateurs (nom_complet, login, mot_de_passe, role) VALUES
 ('KOFFI N''Guessan (Administrateur)', 'admin', SHA2('admin123',256), 'ADMIN'),
-('TRAORE Aminata (Gestionnaire)', 'aminata', SHA2('aminata2026',256), 'GESTIONNAIRE');
+('TRAORE Aminata (Gestionnaire)', 'aminata', SHA2('aminata2026',256), 'GESTIONNAIRE'),
+('GBEDE NEE ADOU BOMO', 'gbede', SHA2('gbede',256), 'ADMIN'),
+('KUYO NEE NATEY NATHALIE', 'natey', SHA2('natey2026',256), 'ADMIN'),
+('TANOH EHUI Armand', 'armand', SHA2('armand2026',256), 'ADMIN');
 
 INSERT INTO categories (libelle, description) VALUES
 ('Materiaux', 'Materiaux de construction pour chantier'),

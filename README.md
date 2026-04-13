@@ -58,6 +58,9 @@ Le script SQL cree notamment :
 
 - `admin` / `admin123`
 - `aminata` / `aminata2026`
+- `gbede` / `gbede`
+- `natey` / `natey2026`
+- `armand` / `armand2026`
 
 ## Lancer le projet
 
