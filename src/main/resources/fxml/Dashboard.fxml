@@ -116,6 +116,7 @@
                         <TableColumn fx:id="colCategorie" text="Categorie" prefWidth="160"/>
                         <TableColumn fx:id="colFournisseur" text="Fournisseur" prefWidth="180"/>
                         <TableColumn fx:id="colStatut" text="Statut" prefWidth="120"/>
+                        <TableColumn fx:id="colAction" text="Action" prefWidth="150"/>
                     </columns>
                 </TableView>
             </VBox>

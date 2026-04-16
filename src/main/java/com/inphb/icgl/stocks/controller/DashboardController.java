@@ -2,6 +2,7 @@ package com.inphb.icgl.stocks.controller;
 
 import com.inphb.icgl.stocks.dao.MouvementDAO;
 import com.inphb.icgl.stocks.dao.ProduitDAO;
+import com.inphb.icgl.stocks.model.Mouvement;
 import com.inphb.icgl.stocks.model.Produit;
 import com.inphb.icgl.stocks.repository.IMouvementRepository;
 import com.inphb.icgl.stocks.repository.IProduitRepository;
@@ -36,6 +37,7 @@ public class DashboardController {
     @FXML private TableColumn<Produit, String>   colCategorie;
     @FXML private TableColumn<Produit, String>   colFournisseur;
     @FXML private TableColumn<Produit, String>   colStatut;
+    @FXML private TableColumn<Produit, Void>     colAction;
 
     private final IProduitRepository produitDAO = new ProduitDAO();
     private final IMouvementRepository mouvementDAO = new MouvementDAO();
@@ -75,6 +77,34 @@ public class DashboardController {
                 } else {
                     setText(statut);
                     setStyle("-fx-text-fill:#1e8449; -fx-font-weight:bold; -fx-alignment:CENTER;");
+                }
+            }
+        });
+
+        colAction.setCellFactory(col -> new TableCell<>() {
+            private final Button btnApprovisionner = new Button("Ajouter stock");
+
+            {
+                btnApprovisionner.setStyle(
+                        "-fx-background-color:#2F80ED; -fx-border-color:#1F5FB9; " +
+                        "-fx-border-width:1.2; -fx-text-fill:white; -fx-font-size:12px; " +
+                        "-fx-font-weight:700; -fx-background-radius:7; -fx-border-radius:7;"
+                );
+                btnApprovisionner.setOnAction(event -> {
+                    Produit produit = getTableView().getItems().get(getIndex());
+                    approvisionnerProduit(produit);
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(btnApprovisionner);
+                    setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+                    setStyle("-fx-alignment:CENTER;");
                 }
             }
         });
@@ -186,5 +216,47 @@ public class DashboardController {
                         .multiply(p.getPrixUnitaire() == null ? BigDecimal.ZERO : p.getPrixUnitaire())
                         .doubleValue())
                 .sum();
+    }
+
+    private void approvisionnerProduit(Produit produit) {
+        TextInputDialog dialog = new TextInputDialog("1");
+        dialog.setTitle("Approvisionnement");
+        dialog.setHeaderText("Approvisionner : " + produit.getDesignation());
+        dialog.setContentText("Quantite a ajouter :");
+        dialog.showAndWait().ifPresent(saisie -> {
+            try {
+                int quantite = Integer.parseInt(saisie.trim());
+                if (quantite <= 0) {
+                    afficherMessage("Quantite invalide", "La quantite doit etre superieure a 0.", Alert.AlertType.WARNING);
+                    return;
+                }
+
+                Mouvement mouvement = new Mouvement();
+                mouvement.setIdProduit(produit.getId());
+                mouvement.setTypeMouvement("ENTREE");
+                mouvement.setQuantite(quantite);
+                mouvement.setMotif("Approvisionnement rapide depuis le tableau de bord");
+                if (SessionManager.getUtilisateur() != null) {
+                    mouvement.setIdUtilisateur(SessionManager.getUtilisateur().getId());
+                }
+
+                if (mouvementDAO.save(mouvement)) {
+                    afficherMessage("Approvisionnement", "Stock mis a jour avec succes.", Alert.AlertType.INFORMATION);
+                    chargerIndicateurs();
+                } else {
+                    afficherMessage("Echec", "Impossible d'approvisionner ce produit.", Alert.AlertType.ERROR);
+                }
+            } catch (NumberFormatException e) {
+                afficherMessage("Quantite invalide", "Entrez un nombre entier valide.", Alert.AlertType.WARNING);
+            }
+        });
+    }
+
+    private void afficherMessage(String titre, String message, Alert.AlertType type) {
+        Alert alert = new Alert(type);
+        alert.setTitle(titre);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }
