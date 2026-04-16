@@ -1,8 +1,11 @@
 module com.inphb.icgl.stocks {
     requires javafx.controls;
     requires javafx.fxml;
+    requires javafx.swing;
     requires java.sql;
     requires java.desktop;
+    requires com.google.zxing;
+    requires com.google.zxing.javase;
     requires org.apache.poi.poi;
     requires org.apache.poi.ooxml;
     requires org.apache.pdfbox;

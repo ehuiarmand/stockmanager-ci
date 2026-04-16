@@ -3,6 +3,7 @@ package com.inphb.icgl.stocks.dao;
 import com.inphb.icgl.stocks.model.Utilisateur;
 import com.inphb.icgl.stocks.repository.IUtilisateurRepository;
 import com.inphb.icgl.stocks.utils.DatabaseConnection;
+import com.inphb.icgl.stocks.utils.TotpUtil;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -15,19 +16,24 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class UtilisateurDAO implements IUtilisateurRepository {
+    private static volatile boolean twoFactorColumnsChecked;
     private String lastErrorMessage;
+    private boolean lastAuthUserDisabled;
 
     @Override
     public Utilisateur findByLogin(String login) {
         lastErrorMessage = null;
-        String sql = "SELECT id, nom_complet, login, mot_de_passe, role, actif FROM utilisateurs WHERE login = ?";
-        try (Connection cn = DatabaseConnection.getConnection();
-             PreparedStatement ps = cn.prepareStatement(sql)) {
+        String sql = "SELECT id, nom_complet, login, mot_de_passe, role, actif, two_factor_enabled, two_factor_secret "
+                + "FROM utilisateurs WHERE login = ?";
+        try (Connection cn = DatabaseConnection.getConnection()) {
+            ensureTwoFactorColumns(cn);
+            try (PreparedStatement ps = cn.prepareStatement(sql)) {
             ps.setString(1, login);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return mapUtilisateur(rs);
                 }
+            }
             }
         } catch (SQLException e) {
             lastErrorMessage = buildDatabaseErrorMessage(e);
@@ -38,12 +44,17 @@ public class UtilisateurDAO implements IUtilisateurRepository {
     @Override
     public Utilisateur authenticate(String login, String motDePasseClair) {
         lastErrorMessage = null;
+        lastAuthUserDisabled = false;
         try {
             Utilisateur utilisateur = findByLogin(login);
             if (lastErrorMessage != null) {
                 return null;
             }
-            if (utilisateur == null || !utilisateur.isActif()) {
+            if (utilisateur == null) {
+                return null;
+            }
+            if (!utilisateur.isActif()) {
+                lastAuthUserDisabled = true;
                 return null;
             }
             String hashInput = hashSha256(motDePasseClair);
@@ -58,21 +69,42 @@ public class UtilisateurDAO implements IUtilisateurRepository {
     }
 
     @Override
+    public boolean verifyTwoFactorCode(Utilisateur utilisateur, String code) {
+        if (utilisateur == null || !utilisateur.isTwoFactorEnabled()) {
+            return true;
+        }
+        try {
+            return TotpUtil.verifyCode(utilisateur.getTwoFactorSecret(), code);
+        } catch (IllegalArgumentException e) {
+            lastErrorMessage = "Configuration 2FA invalide pour cet utilisateur.";
+            return false;
+        }
+    }
+
+    @Override
     public String getLastErrorMessage() {
+        if (lastAuthUserDisabled) {
+            return "Compte desactive. Veuillez voir l'administrateur pour l'activer.";
+        }
         return lastErrorMessage;
     }
 
     @Override
     public boolean save(Utilisateur utilisateur) {
-        String sql = "INSERT INTO utilisateurs(nom_complet, login, mot_de_passe, role, actif) VALUES (?, ?, ?, ?, ?)";
-        try (Connection cn = DatabaseConnection.getConnection();
-             PreparedStatement ps = cn.prepareStatement(sql)) {
+        String sql = "INSERT INTO utilisateurs(nom_complet, login, mot_de_passe, role, actif, two_factor_enabled, two_factor_secret) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try (Connection cn = DatabaseConnection.getConnection()) {
+            ensureTwoFactorColumns(cn);
+            try (PreparedStatement ps = cn.prepareStatement(sql)) {
             ps.setString(1, utilisateur.getNomComplet());
             ps.setString(2, utilisateur.getLogin());
             ps.setString(3, hashSha256(utilisateur.getMotDePasse()));
             ps.setString(4, utilisateur.getRole());
             ps.setBoolean(5, utilisateur.isActif());
+            ps.setBoolean(6, utilisateur.isTwoFactorEnabled());
+            ps.setString(7, normalizeTwoFactorSecret(utilisateur));
             return ps.executeUpdate() > 0;
+            }
         } catch (SQLException e) {
             return false;
         }
@@ -82,23 +114,30 @@ public class UtilisateurDAO implements IUtilisateurRepository {
     public boolean update(Utilisateur utilisateur) {
         boolean updatePassword = utilisateur.getMotDePasse() != null && !utilisateur.getMotDePasse().isBlank();
         String sql = updatePassword
-                ? "UPDATE utilisateurs SET nom_complet = ?, login = ?, mot_de_passe = ?, role = ?, actif = ? WHERE id = ?"
-                : "UPDATE utilisateurs SET nom_complet = ?, login = ?, role = ?, actif = ? WHERE id = ?";
-        try (Connection cn = DatabaseConnection.getConnection();
-             PreparedStatement ps = cn.prepareStatement(sql)) {
+                ? "UPDATE utilisateurs SET nom_complet = ?, login = ?, mot_de_passe = ?, role = ?, actif = ?, two_factor_enabled = ?, two_factor_secret = ? WHERE id = ?"
+                : "UPDATE utilisateurs SET nom_complet = ?, login = ?, role = ?, actif = ?, two_factor_enabled = ?, two_factor_secret = ? WHERE id = ?";
+        try (Connection cn = DatabaseConnection.getConnection()) {
+            ensureTwoFactorColumns(cn);
+            String twoFactorSecret = normalizeTwoFactorSecret(utilisateur);
+            try (PreparedStatement ps = cn.prepareStatement(sql)) {
             ps.setString(1, utilisateur.getNomComplet());
             ps.setString(2, utilisateur.getLogin());
             if (updatePassword) {
                 ps.setString(3, hashSha256(utilisateur.getMotDePasse()));
                 ps.setString(4, utilisateur.getRole());
                 ps.setBoolean(5, utilisateur.isActif());
-                ps.setInt(6, utilisateur.getId());
+                ps.setBoolean(6, utilisateur.isTwoFactorEnabled());
+                ps.setString(7, twoFactorSecret);
+                ps.setInt(8, utilisateur.getId());
             } else {
                 ps.setString(3, utilisateur.getRole());
                 ps.setBoolean(4, utilisateur.isActif());
-                ps.setInt(5, utilisateur.getId());
+                ps.setBoolean(5, utilisateur.isTwoFactorEnabled());
+                ps.setString(6, twoFactorSecret);
+                ps.setInt(7, utilisateur.getId());
             }
             return ps.executeUpdate() > 0;
+            }
         } catch (SQLException e) {
             return false;
         }
@@ -137,16 +176,19 @@ public class UtilisateurDAO implements IUtilisateurRepository {
     @Override
     public ObservableList<Utilisateur> findAll(int page, int pageSize) {
         ObservableList<Utilisateur> list = FXCollections.observableArrayList();
-        String sql = "SELECT id, nom_complet, login, mot_de_passe, role, actif FROM utilisateurs LIMIT ? OFFSET ?";
+        String sql = "SELECT id, nom_complet, login, mot_de_passe, role, actif, two_factor_enabled, two_factor_secret "
+                + "FROM utilisateurs LIMIT ? OFFSET ?";
         int offset = Math.max(0, page - 1) * pageSize;
-        try (Connection cn = DatabaseConnection.getConnection();
-             PreparedStatement ps = cn.prepareStatement(sql)) {
+        try (Connection cn = DatabaseConnection.getConnection()) {
+            ensureTwoFactorColumns(cn);
+            try (PreparedStatement ps = cn.prepareStatement(sql)) {
             ps.setInt(1, pageSize);
             ps.setInt(2, offset);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     list.add(mapUtilisateur(rs));
                 }
+            }
             }
         } catch (SQLException ignored) {
         }
@@ -193,7 +235,52 @@ public class UtilisateurDAO implements IUtilisateurRepository {
         utilisateur.setMotDePasse(rs.getString("mot_de_passe"));
         utilisateur.setRole(rs.getString("role"));
         utilisateur.setActif(rs.getBoolean("actif"));
+        utilisateur.setTwoFactorEnabled(rs.getBoolean("two_factor_enabled"));
+        utilisateur.setTwoFactorSecret(rs.getString("two_factor_secret"));
         return utilisateur;
+    }
+
+    private String normalizeTwoFactorSecret(Utilisateur utilisateur) {
+        if (!utilisateur.isTwoFactorEnabled()) {
+            return null;
+        }
+        String secret = utilisateur.getTwoFactorSecret();
+        if (secret == null || secret.isBlank()) {
+            secret = TotpUtil.generateSecret();
+            utilisateur.setTwoFactorSecret(secret);
+        }
+        return secret;
+    }
+
+    private void ensureTwoFactorColumns(Connection cn) throws SQLException {
+        if (twoFactorColumnsChecked) {
+            return;
+        }
+        synchronized (UtilisateurDAO.class) {
+            if (twoFactorColumnsChecked) {
+                return;
+            }
+            ensureColumnExists(cn, "two_factor_enabled",
+                    "ALTER TABLE utilisateurs ADD COLUMN two_factor_enabled TINYINT(1) NOT NULL DEFAULT 0");
+            ensureColumnExists(cn, "two_factor_secret",
+                    "ALTER TABLE utilisateurs ADD COLUMN two_factor_secret VARCHAR(64) NULL");
+            twoFactorColumnsChecked = true;
+        }
+    }
+
+    private void ensureColumnExists(Connection cn, String columnName, String alterSql) throws SQLException {
+        String checkSql = "SHOW COLUMNS FROM utilisateurs LIKE ?";
+        try (PreparedStatement ps = cn.prepareStatement(checkSql)) {
+            ps.setString(1, columnName);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return;
+                }
+            }
+        }
+        try (PreparedStatement alter = cn.prepareStatement(alterSql)) {
+            alter.executeUpdate();
+        }
     }
 
     private String buildDatabaseErrorMessage(SQLException e) {

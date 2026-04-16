@@ -9,6 +9,8 @@ CREATE TABLE IF NOT EXISTS utilisateurs (
     mot_de_passe VARCHAR(64) NOT NULL,
     role ENUM('ADMIN','GESTIONNAIRE') DEFAULT 'GESTIONNAIRE',
     actif TINYINT(1) DEFAULT 1,
+    two_factor_enabled TINYINT(1) NOT NULL DEFAULT 0,
+    two_factor_secret VARCHAR(64) NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

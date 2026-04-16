@@ -8,6 +8,8 @@ public interface IUtilisateurRepository {
 
     Utilisateur authenticate(String login, String motDePasseClair);
 
+    boolean verifyTwoFactorCode(Utilisateur utilisateur, String code);
+
     String getLastErrorMessage();
 
     boolean save(Utilisateur utilisateur);

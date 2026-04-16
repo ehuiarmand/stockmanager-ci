@@ -60,6 +60,19 @@
 
             <Region prefHeight="10"/>
 
+            <Label fx:id="lblTwoFactorHint" text="Code de verification (application Authenticator)"
+                   visible="false" managed="false"
+                   style="-fx-font-size:13px; -fx-font-weight:bold; -fx-text-fill:#1B3A6B; -fx-padding:0 0 5 0;"/>
+            <TextField fx:id="txtCodeTwoFactor"
+                       promptText="Entrez le code 2FA"
+                       visible="false" managed="false"
+                       style="-fx-font-size:14px; -fx-padding:10 12; -fx-background-color:white;
+                              -fx-border-color:#CBD5E1; -fx-border-radius:6;
+                              -fx-background-radius:6; -fx-pref-height:42px;"
+                       maxWidth="Infinity"/>
+
+            <Region prefHeight="10"/>
+
             <Label fx:id="lblMessage" text="" wrapText="true" maxWidth="Infinity"
                    style="-fx-font-size:12px; -fx-padding:4 0; -fx-min-height:22px;"/>
 

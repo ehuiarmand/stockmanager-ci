@@ -7,6 +7,8 @@ public class Utilisateur {
     private String motDePasse;
     private String role;
     private boolean actif;
+    private boolean twoFactorEnabled;
+    private String twoFactorSecret;
 
     public int getId() {
         return id;
@@ -54,6 +56,22 @@ public class Utilisateur {
 
     public void setActif(boolean actif) {
         this.actif = actif;
+    }
+
+    public boolean isTwoFactorEnabled() {
+        return twoFactorEnabled;
+    }
+
+    public void setTwoFactorEnabled(boolean twoFactorEnabled) {
+        this.twoFactorEnabled = twoFactorEnabled;
+    }
+
+    public String getTwoFactorSecret() {
+        return twoFactorSecret;
+    }
+
+    public void setTwoFactorSecret(String twoFactorSecret) {
+        this.twoFactorSecret = twoFactorSecret;
     }
 
     @Override

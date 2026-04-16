@@ -22,6 +22,8 @@ public class LoginController {
     @FXML private TextField txtLogin;
     @FXML private PasswordField txtMotDePasse;
     @FXML private TextField txtMotDePasseVisible;
+    @FXML private TextField txtCodeTwoFactor;
+    @FXML private Label lblTwoFactorHint;
     @FXML private Button btnTogglePassword;
     @FXML private Button btnConnexion;
     @FXML private Button btnQuitter;
@@ -64,6 +66,7 @@ public class LoginController {
             "-fx-border-radius:6; -fx-background-radius:6; -fx-pref-height:42px;";
 
     private boolean passwordVisible;
+    private Utilisateur pendingTwoFactorUser;
 
     @FXML
     public void initialize() {
@@ -84,17 +87,33 @@ public class LoginController {
                 txtMotDePasse.setStyle(Boolean.TRUE.equals(focused) ? FIELD_FOCUS : FIELD_NORMAL));
         txtMotDePasseVisible.focusedProperty().addListener((obs, oldValue, focused) ->
                 txtMotDePasseVisible.setStyle(Boolean.TRUE.equals(focused) ? FIELD_FOCUS : FIELD_NORMAL));
+        txtCodeTwoFactor.focusedProperty().addListener((obs, oldValue, focused) ->
+                txtCodeTwoFactor.setStyle(Boolean.TRUE.equals(focused) ? FIELD_FOCUS : FIELD_NORMAL));
 
         txtMotDePasseVisible.textProperty().bindBidirectional(txtMotDePasse.textProperty());
         updatePasswordToggleIcon();
 
+        txtLogin.textProperty().addListener((obs, oldValue, newValue) -> resetTwoFactorState(false));
+        txtMotDePasse.textProperty().addListener((obs, oldValue, newValue) -> {
+            if (pendingTwoFactorUser != null) {
+                resetTwoFactorState(false);
+            }
+        });
+
         txtLogin.setOnAction(e -> txtMotDePasse.requestFocus());
         txtMotDePasse.setOnAction(e -> handleConnexion());
         txtMotDePasseVisible.setOnAction(e -> handleConnexion());
+        txtCodeTwoFactor.setOnAction(e -> handleConnexion());
+        resetTwoFactorState(false);
     }
 
     @FXML
     private void handleConnexion() {
+        if (pendingTwoFactorUser != null) {
+            verifierDeuxiemeFacteur();
+            return;
+        }
+
         String login = txtLogin.getText() == null ? "" : txtLogin.getText().trim();
         String mdp = txtMotDePasse.getText() == null ? "" : txtMotDePasse.getText();
 
@@ -111,6 +130,19 @@ public class LoginController {
         }
 
         if (utilisateur != null) {
+            if (utilisateur.isTwoFactorEnabled()) {
+                pendingTwoFactorUser = utilisateur;
+                txtCodeTwoFactor.clear();
+                txtCodeTwoFactor.setVisible(true);
+                txtCodeTwoFactor.setManaged(true);
+                lblTwoFactorHint.setVisible(true);
+                lblTwoFactorHint.setManaged(true);
+                btnConnexion.setText("Verifier le code");
+                lblMessage.setText("Deuxieme facteur requis. Saisissez le code a 6 chiffres.");
+                lblMessage.setStyle("-fx-text-fill:#1B3A6B; -fx-font-weight:bold;");
+                txtCodeTwoFactor.requestFocus();
+                return;
+            }
             SessionManager.setUtilisateur(utilisateur);
             tentatives = 0;
             lblMessage.setText("Connexion reussie...");
@@ -135,6 +167,7 @@ public class LoginController {
         txtLogin.setDisable(true);
         txtMotDePasse.setDisable(true);
         txtMotDePasseVisible.setDisable(true);
+        txtCodeTwoFactor.setDisable(true);
         btnTogglePassword.setDisable(true);
 
         final int[] secondesRestantes = {BLOCAGE_SECONDES};
@@ -150,8 +183,10 @@ public class LoginController {
                 txtLogin.setDisable(false);
                 txtMotDePasse.setDisable(false);
                 txtMotDePasseVisible.setDisable(false);
+                txtCodeTwoFactor.setDisable(false);
                 btnTogglePassword.setDisable(false);
                 txtMotDePasse.clear();
+                resetTwoFactorState(false);
                 lblMessage.setText("Vous pouvez reessayer.");
                 lblMessage.setStyle("-fx-text-fill:#1e8449; -fx-font-weight:bold;");
             }
@@ -192,6 +227,39 @@ public class LoginController {
     private void afficherErreur(String message) {
         lblMessage.setText(message);
         lblMessage.setStyle("-fx-text-fill:#c0392b; -fx-font-weight:bold; -fx-font-size:12px;");
+    }
+
+    private void verifierDeuxiemeFacteur() {
+        String code = txtCodeTwoFactor.getText() == null ? "" : txtCodeTwoFactor.getText().trim();
+        if (!code.matches("\\d{6}")) {
+            afficherErreur("Entrez un code 2FA a 6 chiffres.");
+            return;
+        }
+        if (!utilisateurDAO.verifyTwoFactorCode(pendingTwoFactorUser, code)) {
+            String message = utilisateurDAO.getLastErrorMessage();
+            afficherErreur(message != null ? message : "Code 2FA invalide.");
+            txtCodeTwoFactor.requestFocus();
+            txtCodeTwoFactor.selectAll();
+            return;
+        }
+        SessionManager.setUtilisateur(pendingTwoFactorUser);
+        tentatives = 0;
+        lblMessage.setText("Connexion reussie...");
+        lblMessage.setStyle("-fx-text-fill:#1e8449; -fx-font-weight:bold;");
+        resetTwoFactorState(false);
+        ouvrirMainLayout();
+    }
+
+    private void resetTwoFactorState(boolean clearCode) {
+        pendingTwoFactorUser = null;
+        txtCodeTwoFactor.setVisible(false);
+        txtCodeTwoFactor.setManaged(false);
+        lblTwoFactorHint.setVisible(false);
+        lblTwoFactorHint.setManaged(false);
+        btnConnexion.setText("Se connecter");
+        if (clearCode) {
+            txtCodeTwoFactor.clear();
+        }
     }
 
     @FXML

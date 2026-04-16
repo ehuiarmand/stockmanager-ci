@@ -63,6 +63,10 @@
                             <Label styleClass="form-label" text="Role:" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
                             <ComboBox fx:id="cbRole" prefHeight="29.0" prefWidth="220.0" styleClass="form-combo" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
                             <CheckBox fx:id="chkActif" selected="true" text="Actif" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                            <CheckBox fx:id="chkTwoFactor" text="Activer la double authentification" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
+                            <Label styleClass="form-label" text="Cle 2FA:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                            <TextField fx:id="txtTwoFactorSecret" editable="false" prefHeight="29.0" styleClass="form-field" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3"/>
+                            <Button fx:id="btnGenererTwoFactor" mnemonicParsing="false" onAction="#handleGenererTwoFactor" prefHeight="34.0" prefWidth="150.0" styleClass="action-button warning-button" text="Generer cle 2FA" GridPane.columnIndex="3" GridPane.rowIndex="3"/>
                         </GridPane>
                         <HBox alignment="CENTER_RIGHT" spacing="10.0" styleClass="action-bar">
                             <Region HBox.hgrow="ALWAYS"/>
